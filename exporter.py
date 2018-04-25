@@ -39,7 +39,7 @@ class check_exports(object):
                 self.taskControl['log'].append(task.msg)
                 break
 
-            sleep()
+        sleep()
 
         print '\n' + self.division
         return self.taskControl
