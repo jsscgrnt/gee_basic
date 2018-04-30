@@ -46,7 +46,7 @@ for granule in config.granules:
         img = img.toInt16()
         img = img.select(config.desired_bands)
         if config.geometry is not None:
-            geo = config.geometry.clip(img.geometry())
+            geo = config.geometry().clip(img.geometry())
             img = img.clip(geo)
 
         # Make out image name
