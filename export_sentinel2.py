@@ -7,6 +7,8 @@ print('current computer:', socket.gethostname())
 if socket.gethostname() == 'sentinel2':
     sys.path.append('/home/rviegas/Dropbox')
     sys.path.append('/media/data/sao_domingos_de_prata/config_donwload_sentinel')
+elif socket.gethostname() == 'instance-1':
+    sys.path.append('/home/rviegas/')
 else:
     print 'Unknown computer!'
     raise Exception('exit')
