@@ -27,7 +27,7 @@ def make_name_out(i):
     cc = str(int(i['properties']['CLOUDY_PIXEL_PERCENTAGE']))
     bands = [k[1:] for k in config.desired_bands]
     bands = ''.join(bands)
-    name = '_'.join([spacecraft, date,  granule, cc, bands])
+    name = '_'.join([spacecraft, date,  granule, bands, cc])
 
     return name
 
