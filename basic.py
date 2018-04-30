@@ -21,7 +21,7 @@ signal.signal(signal.SIGALRM, timeout_handler)
 
 def cwa(func):
     """
-    cwa = cwa.
+    cwa = communication_with_alarm.
     Run function with an alarm so that the program do not get stuck.
     """
     while True:
