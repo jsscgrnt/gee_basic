@@ -71,7 +71,7 @@ class image_task(object):
         gee_task = ee.batch.Export.image.toDrive(
             self.image,
             description=self.task_id,
-            folder=folder,
+            folder=self.folder,
             fileNamePrefix=self.task_id,
             maxPixels=self.max_pixels,
             **self.crs()
