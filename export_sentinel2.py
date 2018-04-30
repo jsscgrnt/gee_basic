@@ -46,7 +46,8 @@ for granule in config.granules:
         img = img.toInt16()
         img = img.select(config.desired_bands)
         if config.geometry is not None:
-            img = img.clip(config.geometry)
+            geo = config.geometry.clip(img.geometry())
+            img = img.clip(geo)
 
         # Make out image name
         # ID =  u'COPERNICUS/S2/20180404T130251_20180404T130247_T23KQU'
