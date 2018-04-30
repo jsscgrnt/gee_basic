@@ -50,7 +50,7 @@ for granule in config.granules:
         # Make out image name
         # ID =  u'COPERNICUS/S2/20180404T130251_20180404T130247_T23KQU'
         dummy = ID.split('/')
-        dummy = dummy[len(dummy)]
+        dummy = dummy[len(dummy) - 1]
         date = dummy[0][0:8]
         name = '_'.join(['SEN2', date,  granule])
 
