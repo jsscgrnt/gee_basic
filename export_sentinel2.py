@@ -35,7 +35,8 @@ for granule in config.granules:
         .filterMetadata('MGRS_TILE', 'equals', granule)\
         .filterDate(config.start_date, config.end_date)
 
-    info = collection.getInfo()['features']
+    info = basic.cwa(collection.getInfo)
+    info = info['features']
     info = [i['id'] for i in info]
 
     for ID in info:
@@ -51,7 +52,7 @@ for granule in config.granules:
         # ID =  u'COPERNICUS/S2/20180404T130251_20180404T130247_T23KQU'
         dummy = ID.split('/')
         dummy = dummy[len(dummy) - 1]
-        date = dummy[0][0:8]
+        date = dummy[0:8]
         name = '_'.join(['SEN2', date,  granule])
 
         info = {
