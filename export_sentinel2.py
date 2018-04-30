@@ -46,7 +46,7 @@ for granule in config.granules:
         img = img.toInt16()
         img = img.select(config.desired_bands)
         if config.geometry is not None:
-            geo = ee.Geometry(config.geometry.first())
+            geo = ee.Feature(config.geometry.first()).geometry()
             geo = img.geometry().intersection(geo)
             img = img.clip(geo)
 
