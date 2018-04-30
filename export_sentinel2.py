@@ -17,6 +17,21 @@ from gee_basic import exporter, Task, basic
 import config
 # check argparse, for future versions
 
+
+def make_name_out(i):
+    # ID =  u'COPERNICUS/S2/20180404T130251_20180404T130247_T23KQU'
+    dummy = i['id'].split('/')
+    dummy = dummy[len(dummy) - 1]
+    date = dummy[0:8]
+    spacecraft = 'S2' + i['properties']['SPACECRAFT_NAME'][10:]
+    cc = str(int(i['properties']['CLOUDY_PIXEL_PERCENTAGE']))
+    bands = [k[1:] for k in config.desired_bands]
+    bands = ''.join(bands)
+    name = '_'.join([spacecraft, date,  granule, cc, bands])
+
+    return name
+
+
 basic.cwa(ee.Initialize)
 
 crs_descriptor = basic.CRS(
@@ -37,12 +52,11 @@ for granule in config.granules:
 
     info = basic.cwa(collection.getInfo)
     info = info['features']
-    info = [i['id'] for i in info]
 
-    for ID in info:
+    for i in info:
 
         # Load image, make it Int 16  and select desired bands
-        img = ee.Image(ID)
+        img = ee.Image(i['id'])
         img = img.toInt16()
         img = img.select(config.desired_bands)
         if config.geometry is not None:
@@ -50,12 +64,8 @@ for granule in config.granules:
             geo = img.geometry().intersection(geo)
             img = img.clip(geo)
 
-        # Make out image name
-        # ID =  u'COPERNICUS/S2/20180404T130251_20180404T130247_T23KQU'
-        dummy = ID.split('/')
-        dummy = dummy[len(dummy) - 1]
-        date = dummy[0:8]
-        name = '_'.join(['SEN2', date,  granule])
+        # Make image name
+        name = make_name_out(i)
 
         info = {
             'image': img,
