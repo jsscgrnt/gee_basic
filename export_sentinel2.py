@@ -6,7 +6,6 @@ print('current computer:', socket.gethostname())
 
 if socket.gethostname() == 'sentinel2':
     sys.path.append('/home/rviegas/Dropbox')
-    sys.path.append('/media/data/sao_domingos_de_prata/config_donwload_sentinel')
 elif socket.gethostname() == 'instance-1':
     sys.path.append('/home/rviegas/')
 else:
@@ -14,7 +13,9 @@ else:
     raise Exception('exit')
 
 from gee_basic import exporter, Task, basic
-import config
+
+sys.path.append(sys.argv[1])
+import config_sentinel2 as config
 # check argparse, for future versions
 
 
@@ -22,12 +23,18 @@ def make_name_out(i):
     # ID =  u'COPERNICUS/S2/20180404T130251_20180404T130247_T23KQU'
     dummy = i['id'].split('/')
     dummy = dummy[len(dummy) - 1]
-    date = dummy[0:8]
+    dummy = dummy.split('_')
+    date = dummy[0][0:8]
+    tile = dummy[len(dummy) - 1]
+
     spacecraft = 'S2' + i['properties']['SPACECRAFT_NAME'][10:]
+
     cc = str(int(i['properties']['CLOUDY_PIXEL_PERCENTAGE']))
+
     bands = [k[1:] for k in config.desired_bands]
     bands = ''.join(bands)
-    name = '_'.join([spacecraft, date,  granule, bands, cc])
+
+    name = '_'.join([spacecraft, date,  tile, bands, cc])
 
     return name
 
@@ -41,42 +48,67 @@ crs_descriptor = basic.CRS(
 
 if config.geometry is not None:
     config.geometry = ee.FeatureCollection(config.geometry)
+    config.geometry = ee.Feature(config.geometry.first()).geometry()
+    if config.geometry_buff is not None:
+        config.geometry = config.geometry.buffer(config.geometry_buff)
 
 tasks = {}
-granule = config.granules[0]
-for granule in config.granules:
 
-    collection = ee.ImageCollection('COPERNICUS/S2')\
-        .filterMetadata('MGRS_TILE', 'equals', granule)\
-        .filterDate(config.start_date, config.end_date)
+if config.tiles != config.images:
+    images_info = []
 
-    info = basic.cwa(collection.getInfo)
-    info = info['features']
+    if config.images is None:
+        print('List of TILES informed')
+        tile = config.tiles[0]
+        for tile in config.tiles:
+            collection = ee.ImageCollection('COPERNICUS/S2')\
+                .filterMetadata('MGRS_TILE', 'equals', tile)\
+                .filterDate(config.start_date, config.end_date)
 
-    for i in info:
+            info = basic.cwa(collection.getInfo)
+            info = info['features']
+            images_info = images_info + info
 
-        # Load image, make it Int 16  and select desired bands
-        img = ee.Image(i['id'])
-        img = img.toInt16()
-        img = img.select(config.desired_bands)
-        if config.geometry is not None:
-            geo = ee.Feature(config.geometry.first()).geometry()
-            geo = img.geometry().intersection(geo)
-            img = img.clip(geo)
+    elif config.tiles is None:
+        print('List of IMAGES informed')
+        for i in config.images:
+            img = ee.Image(i)
+            images_info.append(basic.cwa(img.getInfo))
 
-        # Make image name
-        name = make_name_out(i)
+    else:
 
-        info = {
-            'image': img,
-            'task_id': name,
-            'crs': crs_descriptor,
-            'folder': config.folder
-        }
+        print 'Something is wrong with the config file, check IMAGES and TILES'
+        raise Exception('exit')
 
-        t = Task.image_task(**info)
-        tasks[name] = t
-        print name
+else:
+
+    print 'Something is wrong with the config file, check IMAGES and TILES'
+    raise Exception('exit')
+
+
+for i in images_info:
+
+    # Load image, make it Int 16  and select desired bands
+    img = ee.Image(i['id'])
+    img = img.toInt16()
+    img = img.select(config.desired_bands)
+    if config.geometry is not None:
+        geo = img.geometry().intersection(config.geometry)
+        img = img.clip(geo)
+
+    # Make image name
+    name = make_name_out(i)
+
+    INFO = {
+        'image': img,
+        'task_id': name,
+        'crs': crs_descriptor,
+        'folder': config.folder
+    }
+
+    t = Task.image_task(**INFO)
+    tasks[name] = t
+    print name
 
 
 taskControl = {'log': []}
