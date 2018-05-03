@@ -1,5 +1,6 @@
 import signal
 import ee
+import math
 
 
 class TimeoutException(Exception):
@@ -115,3 +116,19 @@ class CRS(object):
                 out[entry] = dic[entry]
 
         return out
+
+
+def getQABits(image, start, end):
+    pattern = 0
+    for i in xrange(start, end + 1):
+        pattern = pattern + math.pow(2, i)
+    return image.select([0]).bitwiseAnd(int(pattern)).rightShift(start)
+
+
+def clear_landsat(image):
+
+    QA = image.select(['pixel_qa'])
+    qa_value = getQABits(QA, 1, 1)
+    qa_value = qa_value.select([0], ['BQA'])
+
+    return qa_value
