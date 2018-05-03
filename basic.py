@@ -45,7 +45,7 @@ def cancelGEETasks(number=None):
     cancelando as imagens que etavam na fila para serem geradas.
     """
 
-    end = 30
+    end = 10
 
     if number is not None:
         end = number
