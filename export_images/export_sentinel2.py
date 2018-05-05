@@ -4,13 +4,13 @@ import sys
 import socket
 print('current computer:', socket.gethostname())
 
-if socket.gethostname() == 'sentinel2':
-    sys.path.append('/home/rviegas/Dropbox')
-elif socket.gethostname() == 'instance-1':
-    sys.path.append('/home/rviegas/')
-else:
-    print 'Unknown computer!'
-    raise Exception('exit')
+print os.getcwd()
+wd = os.getcwd()
+wd = wd.split('/')
+wd = '/'.join(wd[:(len(wd) - 1)])
+print wd
+sys.path.append(wd)
+from gee_basic import exporter, Task, basic
 
 from gee_basic import exporter, Task, basic
 
