@@ -4,7 +4,7 @@
 # DATAS
 # start_date - data inicial para procurar imagens
 # exemplo: start_date = '2013-05-01'
-start_date = '2013-05-01'
+start_date = '2008-01-01'
 # end_date - ultima data para procurar imagens
 # exemplo: end_date = '2018-12-01'
 end_date = '2018-12-01'
