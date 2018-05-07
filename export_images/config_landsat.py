@@ -4,7 +4,7 @@
 # DATAS
 # start_date - data inicial para procurar imagens
 # exemplo: start_date = '2013-05-01'
-start_date = '2013-05-01'
+start_date = '2008-01-01'
 # end_date - ultima data para procurar imagens
 # exemplo: end_date = '2018-12-01'
 end_date = '2018-12-01'
@@ -32,10 +32,10 @@ scale = 30
 # #     '23KQT',
 # #     '23KQU'
 # # ]
-tiles = None
-# tiles = [
-#     '217074'
-# ]
+# tiles = None
+tiles = [
+    '217074'
+]
 # caso se saiba apriori quais imagens devem ser exportadas,
 # as imagens podem ser informadas como um lista de strings ver *
 # note que se 'images' e 'tiles' sao mutualmente exclusivos**.
@@ -45,14 +45,14 @@ tiles = None
 #     'COPERNICUS/S2/20160713T130431_20160713T192011_T23KPT',
 #     'COPERNICUS/S2/20160713T130431_20160713T192011_T23KPU'
 # ] ou images = None
-images = [
-    'LANDSAT/LC08/C01/T1_SR/LC08_217074_20130802',
-    'LANDSAT/LC08/C01/T1_SR/LC08_217074_20140805',
-    'LANDSAT/LC08/C01/T1_SR/LC08_217074_20150925',
-    'LANDSAT/LC08/C01/T1_SR/LC08_217074_20160810',
-    'LANDSAT/LC08/C01/T1_SR/LC08_217074_20180120'
-]
-# images = None
+# images = [
+#     'LANDSAT/LC08/C01/T1_SR/LC08_217074_20130802',
+#     'LANDSAT/LC08/C01/T1_SR/LC08_217074_20140805',
+#     'LANDSAT/LC08/C01/T1_SR/LC08_217074_20150925',
+#     'LANDSAT/LC08/C01/T1_SR/LC08_217074_20160810',
+#     'LANDSAT/LC08/C01/T1_SR/LC08_217074_20180120'
+# ]
+images = None
 
 # GEOMETRIA
 # geometria para cortar todos os tiles, polygon nao multipolygons
@@ -66,7 +66,7 @@ geometry_buff = 5000
 # PASTA DE SAIDA
 # nome da pasta para qual as imagens vao ser exportadas
 # exemplo: folder_name = 'sao_domingos_do_prata'
-folder = 'sao_domingos_SELECTED'
+folder = 'sao_domingos_all'
 
 # DESIRED BANDS
 # informe as bandas desejadas no formato de lista de strings ver *
