@@ -1,16 +1,10 @@
+# have to implement some kind of select heres
 
 
 class eeImage(object):
     """
     Class that handles ee.Images creations.
 
-    # attributes
-
-        self.refactor_cst = None
-        self.image = None
-        self.id = None
-        self.bands_dic = None
-        self.bands = None
     """
 
     def __init__(
@@ -40,7 +34,7 @@ class eeImage(object):
             self.id = 'there is no easy id for me, you can call me babe'
             self.image = image
 
-        elif type(image).__name__ == 'str':
+        elif type(image).__name__ in ['str', 'unicode']:
             self.id = image
             self.image = ee.Image(self.id)
 
