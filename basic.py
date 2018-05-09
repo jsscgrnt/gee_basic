@@ -1,6 +1,6 @@
 import signal
-import ee
 import math
+# needs ee
 
 
 class TimeoutException(Exception):
@@ -132,3 +132,74 @@ def clear_landsat(image):
     qa_value = qa_value.select([0], ['BQA'])
 
     return qa_value
+
+
+def rescale(img, exp, thresholds):
+    bands = [
+        'B1', 'B2', 'B3', 'B4',
+        'B5', 'B6', 'B7', 'B8', 'B8A',
+        'B9', 'B10', 'B11', 'B12'
+    ]
+    dic_bands = {i: img.select(i) for i in bands}
+
+    if exp == 'img':
+        # print 'hi'
+        out = img.subtract(thresholds[0])\
+            .divide(thresholds[1] - thresholds[0])
+    else:
+        out = img.expression(exp, dic_bands)\
+            .subtract(thresholds[0]).divide(thresholds[1] - thresholds[0])
+    return out
+
+
+def sentinelCloudScore(image):
+    bands = [
+        'B1', 'B2', 'B3', 'B4',
+        'B5', 'B6', 'B7', 'B8', 'B8A',
+        'B9', 'B10', 'B11', 'B12'
+    ]
+
+    img = image.select(bands).divide(10000)  # Rescale to 0-1
+
+    # Compute several indicators of cloudyness and take the minimum of them.
+    score = ee.Image(1)
+
+    # Clouds are reasonably bright in the blue and cirrus bands.
+    score = score.min(rescale(img, 'B2', [0.1, 0.5]))
+    score = score.min(rescale(img, 'B1', [0.1, 0.3]))
+    score = score.min(rescale(img, 'B1 + B10', [0.15, 0.2]))
+
+    # Clouds are reasonably bright in all visible bands.
+    score = score.min(rescale(img, 'B4 + B3 + B2', [0.2, 0.8]))
+
+    # Clouds are moist
+    ndmi = img.normalizedDifference(['B8', 'B11'])
+    score = score.min(rescale(ndmi, 'img', [-0.1, 0.1]))
+
+    # However, clouds are not snow.
+    ndsi = img.normalizedDifference(['B3', 'B11'])
+    score = score.min(rescale(ndsi, 'img', [0.8, 0.6]))
+
+    score = score.multiply(100).byte()
+
+    return score
+
+
+def clear_sentinel(image):
+
+    cs = sentinelCloudScore(image)
+    cs = cs.lte(10)
+    k = ee.Kernel.fixed(5, 5,
+                        [
+                            [1, 1, 1, 1, 1],
+                            [1, 1, 1, 1, 1],
+                            [1, 1, 1, 1, 1],
+                            [1, 1, 1, 1, 1],
+                            [1, 1, 1, 1, 1]
+                        ]
+                        )
+
+    buff = cs.focal_min(kernel=k, iterations=10)
+    qa = cs.addBands(buff).select([0, 1], ['BQA', 'Bbuff'])
+
+    return qa
