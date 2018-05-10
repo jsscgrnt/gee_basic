@@ -1,7 +1,5 @@
-# import ee
-# import sys
-# sys.path.append('/home/rviegas/Dropbox/Python/GEE')
-# from gee_basic.basic import cwa
+from gee_basic import ee
+from gee_basic import cwa
 
 
 class image_task(object):

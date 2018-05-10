@@ -1,5 +1,5 @@
-# import ee
-# needs ee
+from gee_basic import ee
+from gee_basic import cwa
 
 
 class glcmCalculator(object):

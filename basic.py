@@ -1,6 +1,6 @@
 import signal
 import math
-# needs ee
+from gee_basic import ee
 
 
 class TimeoutException(Exception):

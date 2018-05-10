@@ -1,4 +1,6 @@
 import time
+from gee_basic import ee
+from gee_basic import cwa
 
 
 def sleep():

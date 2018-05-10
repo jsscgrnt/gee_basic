@@ -1,4 +1,5 @@
-# have to implement some kind of select heres
+from gee_basic import ee
+from gee_basic import cwa
 
 
 class eeImage(object):
