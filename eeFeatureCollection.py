@@ -12,37 +12,41 @@ class eeFeatureCollection(object):
         # attributes
 
         self.eeFeatureCollection = None
-        self.fusion_table = None
         self.id = None
-        self.length = None
         """
 
-        self.set_eeFeatureCollection(fc, fusion_table)
-        self.set_feature_collection_length(length)
+        self.fc = fc
+        self.fusion_table = fusion_table
+        self.length = length
+        self.set_eeFeatureCollection()
 
-    def set_eeFeatureCollection(self, fc, fusion_table):
+    def set_eeFeatureCollection(self):
         """
         Set eeFeatureCollection according with it's type.
         """
 
-        if type(fc).__name__ == 'FeatureCollection':
-            self.eeFeatureCollection = fc
+        if type(self.fc).__name__ == 'FeatureCollection':
+            self.eeFeatureCollection = self.fc
 
-        elif type(fc).__name__ == 'str':
+        elif type(self.fc).__name__ == 'str':
 
-            if fusion_table:
-                fc = 'ft:' + fc
-                self.fusion_table = fusion_table
+            self.fc = self.fc
+            self.id = self.fc
+            if self.fusion_table:
+                self.id = 'ft:' + self.fc
 
-            self.id = fc
             self.eeFeatureCollection = ee.FeatureCollection(
                 self.id
             )
 
         else:
-            print fc, type(fc).__name__
+            print self.fc, type(self.fc).__name__
+            print('not implemented,  fc unknown')
+            raise Exception('exit')
 
-    def set_feature_collection_length(self, length):
+        self.set_feature_collection_length(self.length)
+
+    def set_feature_collection_length(self, length=None):
         """
         Set eeFeatureCollection length.
         If not informed a getInfo will be used to recover it.
@@ -50,10 +54,9 @@ class eeFeatureCollection(object):
 
         self.length = length
 
-        if length is None:
+        if self.length is None:
 
-            fc = self.eeFeatureCollection
-            fc_size_GEE = fc.size()
+            fc_size_GEE = self().size()
             fc_size = cwa(
                 fc_size_GEE.getInfo
             )
@@ -66,10 +69,23 @@ class eeFeatureCollection(object):
         Fails if feature collection length is bigger than 5000, not sure (?)
         """
 
-        fc0 = self.eeFeatureCollection
-        fc_list = fc0.toList(step, start)
+        fc_list = self().toList(step, start)
         fc = ee.FeatureCollection(fc_list)
 
         out = eeFeatureCollection(fc, length=step)
 
         return out
+
+    def filterBounds(self, geometry):
+        """
+        Filter featureCollection by a geometry, living only the features
+        that are within the geometry
+        """
+
+        dummy = self().filterBounds(geometry)
+
+        return eeFeatureCollection(dummy)
+
+    def __call__(self):
+
+        return self.eeFeatureCollection

@@ -157,3 +157,7 @@ class eeImage(object):
         else:
             print('not able to define name for this image')
             raise Exception('exit')
+
+    def __call__(self):
+
+        return self.image
