@@ -146,6 +146,7 @@ class eeImage(object):
 
         self.refactor_cst = cst
         self.image = self.image.multiply(cst)
+        self.make_bands_dictionary()
 
     def set_name(self):
         """
@@ -158,6 +159,12 @@ class eeImage(object):
         else:
             print('not able to define name for this image')
             raise Exception('exit')
+
+    def select_bands(self, bands):
+
+        self.bands = bands
+        self.image = self.image.select(bands)
+        self.make_bands_dictionary()
 
     def __call__(self):
 
