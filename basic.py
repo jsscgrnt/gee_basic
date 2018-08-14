@@ -62,17 +62,17 @@ def cancelGEETasks(number=None):
 class CRS(object):
     """docstring for CRS."""
 
-    def __init__(self, crs=None, scale=None, crsTransform=None):
+    def __init__(self, epsg=None, scale=None, crsTransform=None):
         """init crs."""
         super(CRS, self).__init__()
 
-        self.set_crs(crs)
+        self.set_epsg(epsg)
         self.set_scale(scale)
         self.set_crsTransform(crsTransform)
 
-    def set_crs(self, crs):
+    def set_epsg(self, epsg):
         """setter."""
-        self.crs = crs
+        self.epsg = epsg
 
     def set_scale(self, scale):
         """setter."""
@@ -89,18 +89,11 @@ class CRS(object):
         checks if scale and crsTransform are not both None
         or if both are set
         """
-        if self.crs is None:
+        if self.epsg is None:
             print('crs not defined')
             raise Exception('exit')
 
-        status_scale = self.scale is None
-        status_crsTransform = self.crsTransform is None
-
-        if status_scale == status_crsTransform:
-            print('scale/crsTransform problem')
-            raise Exception('exit')
-
-    def __call__(self):
+    def get_crs_and_scale(self):
         """
         get crs dictionary.
         crs dictionary is one of the following pairs
@@ -110,12 +103,51 @@ class CRS(object):
         self.validate_crs()
 
         dic = self.__dict__
-        out = {}
-        for entry in dic:
-            if dic[entry] is not None:
-                out[entry] = dic[entry]
-
+        out = {
+            'crs': dic['epsg'],
+            'scale': dic['scale']
+        }
         return out
+
+    def get_crs_and_crsTransform(self):
+        """
+        get crs dictionary.
+        crs dictionary is one of the following pairs
+            {crs, scale}
+            {crs, crsTransform}
+        """
+        self.validate_crs()
+
+        dic = self.__dict__
+        out = {
+            'crs': dic['epsg'],
+            'crsTransform': dic['crsTransform']
+        }
+        return out
+
+        # status_scale = self.scale is None
+        # status_crsTransform = self.crsTransform is None
+        #
+        # if status_scale == status_crsTransform:
+        #     print('scale/crsTransform problem')
+        #     raise Exception('exit')
+
+    # def __call__(self):
+    #     """
+    #     get crs dictionary.
+    #     crs dictionary is one of the following pairs
+    #         {crs, scale}
+    #         {crs, crsTransform}
+    #     """
+    #     self.validate_crs()
+    #
+    #     dic = self.__dict__
+    #     out = {}
+    #     for entry in dic:
+    #         if dic[entry] is not None:
+    #             out[entry] = dic[entry]
+#
+        # return out
 
 
 def getQABits(image, start, end):

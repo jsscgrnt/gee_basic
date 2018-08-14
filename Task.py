@@ -37,6 +37,7 @@ class image_task(object):
         """
         Do everything that should be done.
         """
+        print crs.crs
         self.crs = crs
 
     def set_task_id(self, task_id):
