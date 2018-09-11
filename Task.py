@@ -5,7 +5,14 @@ from gee_basic import cwa
 class image_task(object):
     """docstring for task."""
 
-    def __init__(self, image=None, task_id=None, crs=None, folder=None):
+    def __init__(self,
+                 image=None,
+                 task_id=None,
+                 crs=None,
+                 folder=None,
+                 bucket=None,
+                 where_to=None
+                 ):
         """
         Do everything that should be done.
         """
@@ -17,15 +24,27 @@ class image_task(object):
         self.set_crs(crs)
         self.set_task_id(task_id)
         self.set_export_folder(folder)
+        self.set_export_bucket(bucket)
 
-        if self.folder is not None:
-            self.export_to_drive()
+        if where_to is not None:
+
+            if self.folder is not None and where_to == 'folder':
+                self.export_to_drive()
+
+            if self.bucket is not None and where_to == 'cc':
+                self.export_to_cc()
 
     def set_export_folder(self, folder):
         """
         set export folder
         """
         self.folder = folder
+
+    def set_export_bucket(self, bucket):
+        """
+        set export bucket
+        """
+        self.bucket = bucket
 
     def set_image(self, image):
         """
@@ -37,7 +56,7 @@ class image_task(object):
         """
         Do everything that should be done.
         """
-        print crs.crs
+        # print crs['crs']
         self.crs = crs
 
     def set_task_id(self, task_id):
@@ -48,7 +67,7 @@ class image_task(object):
 
     def validate(self):
 
-        for x in [self.image, self.crs, self.task_id, self.folder]:
+        for x in [self.image, self.crs, self.task_id]:
             if x is None:
                 print 'image/crs/task_id/folder not informed'
                 print 'image: ', self.image
@@ -57,9 +76,13 @@ class image_task(object):
                 print 'folder: ', self.folder
                 raise Exception('exit')
 
+        if self.folder == None and self.bucket == None:
+            print 'bucket/folder not informed'
+            raise Exception('exit')
+
     def export_to_drive(self, folder=None):
         """
-        Do everything that should be done.
+        Does everything that should be done.
         """
 
         if folder is not None:
@@ -73,7 +96,25 @@ class image_task(object):
             folder=self.folder,
             fileNamePrefix=self.task_id,
             maxPixels=self.max_pixels,
-            **self.crs()
+            **self.crs
+        )
+        self.gee_task = gee_task
+
+    def export_to_cc(self, bucket=None):
+        """
+        Does everything that should be done.
+        """
+        if bucket is not None:
+            self.bucket = bucket
+        self.validate()
+
+        gee_task = ee.batch.Export.image.toCloudStorage(
+            self.image,
+            description=self.task_id,
+            bucket=self.bucket,
+            fileNamePrefix=self.task_id,
+            maxPixels=self.max_pixels,
+            **self.crs
         )
         self.gee_task = gee_task
 

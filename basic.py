@@ -125,30 +125,6 @@ class CRS(object):
         }
         return out
 
-        # status_scale = self.scale is None
-        # status_crsTransform = self.crsTransform is None
-        #
-        # if status_scale == status_crsTransform:
-        #     print('scale/crsTransform problem')
-        #     raise Exception('exit')
-
-    # def __call__(self):
-    #     """
-    #     get crs dictionary.
-    #     crs dictionary is one of the following pairs
-    #         {crs, scale}
-    #         {crs, crsTransform}
-    #     """
-    #     self.validate_crs()
-    #
-    #     dic = self.__dict__
-    #     out = {}
-    #     for entry in dic:
-    #         if dic[entry] is not None:
-    #             out[entry] = dic[entry]
-#
-        # return out
-
 
 def getQABits(image, start, end):
     pattern = 0
@@ -158,7 +134,6 @@ def getQABits(image, start, end):
 
 
 def clear_landsat(image):
-
     QA = image.select(['pixel_qa'])
     qa_value = getQABits(QA, 1, 1)
     qa_value = qa_value.select([0], ['BQA'])
