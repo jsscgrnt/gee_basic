@@ -78,6 +78,20 @@ class CRS(object):
         """setter."""
         self.scale = scale
 
+    def set_crsTransform_from_dic(self, dic, tile):
+        """setter."""
+
+        crsTransform = [
+            dic['pixel_sizeX'][tile],
+            0,
+            dic['originX'][tile],
+            0,
+            dic['pixel_sizeY'][tile],
+            dic['originY'][tile]
+        ]
+
+        self.set_crsTransform(crsTransform)
+
     def set_crsTransform(self, crsTransform):
         """setter."""
         self.crsTransform = crsTransform
@@ -121,7 +135,7 @@ class CRS(object):
         dic = self.__dict__
         out = {
             'crs': dic['epsg'],
-            'crsTransform': dic['crsTransform']
+            'crsTransform': str(dic['crsTransform'])
         }
         return out
 
