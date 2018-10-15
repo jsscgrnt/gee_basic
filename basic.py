@@ -135,7 +135,7 @@ class CRS(object):
         dic = self.__dict__
         out = {
             'crs': dic['epsg'],
-            'crsTransform': str(dic['crsTransform'])
+            'crsTransform': dic['crsTransform']
         }
         return out
 
